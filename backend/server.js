@@ -39,7 +39,7 @@ app.get("*", (req, res) => {
 // ── Seed default admin & demo employee ──────────────────────
 async function seedDefaultAdmin() {
   try {
-    const bcrypt   = require("bcrypt");
+    const bcrypt   = require("bcryptjs");
     const User     = require("./models/User");
     const Employee = require("./models/Employee");
 

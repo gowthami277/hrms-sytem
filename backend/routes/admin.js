@@ -3,7 +3,7 @@ const Employee   = require("../models/Employee");
 const Payslip    = require("../models/Payslip");
 const Attendance = require("../models/Attendance");
 const User       = require("../models/User");
-const bcrypt     = require("bcrypt");
+const bcrypt     = require("bcryptjs");
 const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();

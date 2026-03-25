@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Employee Dashboard – Sankar Finance Consultancy</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1e3c;--blue:#1a3a6e;--acc:#2563eb;--gold:#f0a500;--bg:#eaeff8;--card:#fff;--txt:#1e293b;--muted:#64748b;--danger:#ef4444;--ok:#22c55e;--warn:#f59e0b;--bdr:#e2e8f0;--r:12px;--sh:0 4px 18px rgba(15,30,60,0.09);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
+nav{background:linear-gradient(90deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:56px;box-shadow:0 2px 10px rgba(15,30,60,.18);position:sticky;top:0;z-index:200;}
+.nbrand{display:flex;align-items:center;gap:10px;}
+.nlogo{width:32px;height:32px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);font-weight:700;}
+.ntitle{color:#fff;font-size:14.5px;font-weight:700;}
+.nlinks{display:flex;gap:3px;}
+.nlink{color:rgba(255,255,255,.78);padding:5px 13px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;transition:all .18s;border:none;background:none;font-family:'DM Sans',sans-serif;}
+.nlink:hover,.nlink.on{color:#fff;background:rgba(255,255,255,.13);}
+.nbtn{background:rgba(255,255,255,.13);color:#fff;border:1.5px solid rgba(255,255,255,.28);padding:5px 16px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;transition:all .18s;font-family:'DM Sans',sans-serif;}
+.nbtn:hover{background:rgba(239,68,68,.3);}
+main{max-width:1060px;margin:0 auto;padding:26px 18px;}
+.view{display:none;animation:fu .2s ease;}
+.view.on{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+/* PROFILE CARD */
+.pcard{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:20px 24px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;margin-bottom:18px;}
+.pcard-left h2{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin-bottom:8px;}
+.pcard-left p{font-size:13px;color:var(--muted);margin-bottom:3px;}
+.pcard-left strong{color:var(--txt);}
+.avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#f0a500,#e88c00);border:3px solid #fff;box-shadow:0 3px 12px rgba(15,30,60,.15);display:flex;align-items:center;justify-content:center;font-size:28px;}
+
+/* QUICK ACTIONS */
+.qsec{margin-bottom:18px;}
+.qsec-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+.qbtns{display:flex;gap:9px;flex-wrap:wrap;}
+.qbtn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;transition:all .18s;color:#fff;}
+.qbtn:hover{transform:translateY(-1px);}
+.qb1{background:linear-gradient(135deg,var(--acc),#1d4ed8);}
+.qb2{background:linear-gradient(135deg,var(--navy),var(--blue));}
+
+/* TABLE */
+.tcard{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px;}
+.thead{padding:14px 18px 11px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;}
+.thead h2{font-size:14.5px;font-weight:700;color:var(--navy);}
+table{width:100%;border-collapse:collapse;}
+th{background:#f8fafc;text-align:left;padding:9px 13px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bdr);}
+td{padding:11px 13px;font-size:13px;border-bottom:1px solid #f1f5f9;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f8fafc;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.bok{background:#dcfce7;color:#15803d;}
+.bwarn{background:#fef9c3;color:#b45309;}
+.dlbtn{background:linear-gradient(135deg,var(--acc),#1d4ed8);color:#fff;border:none;padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+/* BOTTOM GRID */
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* CALENDAR */
+.cal-card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px;}
+.cal-card h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;}
+.cal-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.cal-table th{text-align:center;padding:5px 3px;font-weight:600;color:var(--muted);font-size:11.5px;}
+.cal-table td{text-align:center;padding:5px 3px;border-radius:6px;cursor:default;}
+.cal-table td.today{background:var(--acc);color:#fff;font-weight:700;border-radius:50%;}
+.cal-table td.absent{color:var(--danger);font-weight:600;}
+.cal-table td.holiday{color:var(--warn);font-weight:600;}
+.cal-footer{font-size:12.5px;color:var(--muted);margin-top:10px;display:flex;gap:14px;align-items:center;}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
+
+/* LEAVE */
+.leave-card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px;}
+.leave-card h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;}
+.leave-bal{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.lbal{background:#f8fafc;border-radius:9px;padding:13px;text-align:center;border-left:3px solid var(--acc);}
+.lbal-type{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.lbal-val{font-size:22px;font-weight:700;color:var(--navy);}
+.lbal-sub{font-size:11px;color:var(--muted);}
+.lhist{margin-top:12px;}
+.lhist-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px;}
+.lhist-row:last-child{border-bottom:none;}
+.ls-approved{color:var(--ok);font-weight:600;font-size:12px;}
+.ls-pending{color:var(--warn);font-weight:600;font-size:12px;}
+.ls-cancel{color:var(--danger);font-weight:600;font-size:12px;}
+
+/* KYC VIEW */
+.kyc-emp{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:22px;max-width:540px;}
+.kyc-emp h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;}
+.kdrow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f1f5f9;font-size:13.5px;}
+.kdrow:last-child{border-bottom:none;}
+.upbtn{background:var(--acc);color:#fff;border:none;padding:5px 14px;border-radius:6px;font-size:12.5px;font-weight:600;cursor:pointer;}
+
+/* LEAVE APPLY */
+.la-card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:22px;max-width:480px;}
+.la-card h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.la-card .sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.fg{margin-bottom:13px;}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.fg input,.fg select,.fg textarea{width:100%;padding:8px 12px;border:1.5px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--txt);background:#f8fafc;outline:none;transition:border .15s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--acc);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.08);}
+.fg textarea{resize:vertical;min-height:65px;}
+.bp{background:linear-gradient(135deg,var(--acc),#1d4ed8);color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:'DM Sans',sans-serif;}
+
+/* LOGOUT */
+.loov{display:none;position:fixed;inset:0;background:rgba(15,30,60,.55);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;}
+.loov.open{display:flex;}
+.lobox{background:#fff;border-radius:15px;width:100%;max-width:330px;padding:30px 34px;text-align:center;box-shadow:0 18px 46px rgba(15,30,60,.24);animation:fu .25s ease;}
+.loico{font-size:42px;margin-bottom:11px;}
+.lobox h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--navy);margin-bottom:6px;}
+.lobox p{color:var(--muted);font-size:13px;margin-bottom:22px;}
+.loacts{display:flex;gap:9px;}
+.bstay{flex:1;padding:10px;border:2px solid var(--bdr);background:transparent;color:var(--navy);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.bdolo{flex:1;padding:10px;background:var(--danger);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--navy);color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;box-shadow:0 5px 18px rgba(15,30,60,.2);z-index:9999;transform:translateY(60px);opacity:0;transition:all .26s;display:flex;align-items:center;gap:8px;}
+.toast.show{transform:none;opacity:1;}
+.footer{text-align:center;color:#94a3b8;font-size:12px;padding:18px;margin-top:10px;}
+.help{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px 18px;font-size:13px;color:var(--muted);margin-top:14px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nbrand">
+    <div class="nlogo">S</div>
+    <div class="ntitle">Sankar Finance Consultancy</div>
+  </div>
+  <div class="nlinks">
+    <button class="nlink on" onclick="showV('dash')">Dashboard</button>
+    <button class="nlink" onclick="showV('kyc')">KYC Docs</button>
+    <button class="nlink" onclick="showV('payslips')">Payslips</button>
+  </div>
+  <button class="nbtn" onclick="showLo()">Logout</button>
+</nav>
+
+<main>
+
+<!-- DASHBOARD -->
+<div class="view on" id="view-dash">
+  <!-- Profile -->
+  <div class="pcard">
+    <div class="pcard-left">
+      <h2>Welcome, Jane Doe</h2>
+      <p><strong>Employee ID:</strong> CSH001</p>
+      <p><strong>Designation:</strong> HR Manager</p>
+      <p><strong>Department:</strong> Human Resources</p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+      <div class="avatar">👩</div>
+      <div>
+        <div style="font-size:11.5px;font-weight:700;color:var(--navy);margin-bottom:7px;text-align:right">Quick Actions</div>
+        <button class="qbtn qb1" onclick="showV('kyc')">Update KYC Documents</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payslip History -->
+  <div class="tcard">
+    <div class="thead">
+      <h2>Payslip History</h2>
+    </div>
+    <table>
+      <thead><tr><th>Month</th><th>Gross Salary</th><th>Deductions</th><th>Net Salary</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>CSH001</td><td>2023</td><td><span class="badge bok">Complete ✔</span></td><td>View</td><td><button class="dlbtn">Download</button></td></tr>
+        <tr><td>Jane Doe</td><td>₹50,000</td><td>₹5,000</td><td>View</td><td><button class="dlbtn">Download</button></td></tr>
+        <tr><td>Department</td><td>₹48,000</td><td><span class="badge bwarn">₹4,800 ⚠</span></td><td>View</td><td><button class="dlbtn">Download</button></td></tr>
+        <tr><td>CSH002</td><td>₹48,000</td><td><span class="badge bwarn">₹4,000 ⚠</span></td><td>View</td><td><button class="dlbtn">Download</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bottom: Attendance + Leave -->
+  <div class="bgrid">
+    <!-- Attendance Calendar -->
+    <div class="cal-card">
+      <h3>Attendance Record (This Month)</h3>
+      <table class="cal-table">
+        <thead><tr><th>A</th><th>A</th><th>1</th><th></th><th></th><th></th><th></th></tr></thead>
+        <tbody id="cal-body"></tbody>
+      </table>
+      <div class="cal-footer">
+        <span><span class="dot" style="background:var(--ok)"></span>Total Days Present 🟢</span>
+        <span><span class="dot" style="background:var(--warn)"></span>Public Holidays 2</span>
+      </div>
+    </div>
+
+    <!-- Leave -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;gap:9px;">
+        <button class="qbtn qb1" onclick="showV('leave')">Quick Actions</button>
+        <button class="qbtn qb2" onclick="showV('leave')">Apply for Leave</button>
+      </div>
+      <div class="leave-card">
+        <h3>Quick Actions</h3>
+        <button class="qbtn qb2" style="width:100%;margin-bottom:8px" onclick="showV('leave')">View Leave History</button>
+        <div style="margin-top:6px;">
+          <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;">Recent Balance & History</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+            <div style="font-size:12.5px;font-weight:600;color:var(--muted);">Type</div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--muted);">Ersent Leave</div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--muted);">Casual</div>
+            <div style="font-size:13px;font-weight:600;">5 / 8</div>
+          </div>
+          <div style="font-size:22px;font-weight:700;color:var(--navy);margin-bottom:10px;">8 / 12</div>
+          <div class="lhist-row"><span>Sick Leave</span><span class="ls-approved">Approved</span></div>
+          <div class="lhist-row"><span>Pending</span><span class="ls-cancel">Cancel</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="help">Need Help? Contact Support</div>
+</div>
+
+<!-- KYC DOCS VIEW -->
+<div class="view" id="view-kyc">
+  <h2 style="font-size:17px;font-weight:700;margin-bottom:16px;color:var(--navy)">My KYC Documents</h2>
+  <div class="kyc-emp">
+    <h3>Jane Doe – CSH001</h3>
+    <div class="kdrow"><div><div style="font-weight:600">Aadhaar Card</div><div style="font-size:11.5px;color:var(--muted)">PDF/JPG/PNG</div></div><div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--ok);font-size:12.5px;font-weight:600;">✅ Uploaded</span></div></div>
+    <div class="kdrow"><div><div style="font-weight:600">PAN Card</div><div style="font-size:11.5px;color:var(--muted)">PDF/JPG/PNG</div></div><div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--ok);font-size:12.5px;font-weight:600;">✅ Uploaded</span></div></div>
+    <div class="kdrow"><div><div style="font-weight:600">Passport</div><div style="font-size:11.5px;color:var(--muted)">PDF/JPG/PNG</div></div><button class="upbtn" onclick="toast('Select file to upload','📎')">Upload</button></div>
+    <div class="kdrow"><div><div style="font-weight:600">Bank Passbook</div><div style="font-size:11.5px;color:var(--muted)">PDF/JPG/PNG</div></div><button class="upbtn" onclick="toast('Select file to upload','📎')">Upload</button></div>
+    <div style="margin-top:16px;"><button class="bp" onclick="toast('KYC status updated!','✅')">Update KYC Status</button></div>
+  </div>
+</div>
+
+<!-- PAYSLIPS VIEW -->
+<div class="view" id="view-payslips">
+  <h2 style="font-size:17px;font-weight:700;margin-bottom:16px;color:var(--navy)">My Payslips</h2>
+  <div class="tcard">
+    <div class="thead"><h2>Payslip History</h2></div>
+    <table>
+      <thead><tr><th>Month</th><th>Gross Salary</th><th>Deductions</th><th>Net Salary</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>March 2025</td><td>₹50,000</td><td>₹5,000</td><td>₹45,000</td><td><span class="badge bok">✔ Complete</span></td><td><button class="dlbtn">Download</button></td></tr>
+        <tr><td>February 2025</td><td>₹50,000</td><td>₹5,000</td><td>₹45,000</td><td><span class="badge bok">✔ Complete</span></td><td><button class="dlbtn">Download</button></td></tr>
+        <tr><td>January 2025</td><td>₹48,000</td><td><span class="badge bwarn">₹4,800 ⚠</span></td><td>₹43,200</td><td><span class="badge bwarn">⚠ Pending</span></td><td><button class="dlbtn">View</button></td></tr>
+        <tr><td>December 2024</td><td>₹48,000</td><td>₹4,000</td><td>₹44,000</td><td><span class="badge bok">✔ Complete</span></td><td><button class="dlbtn">Download</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- LEAVE VIEW -->
+<div class="view" id="view-leave">
+  <h2 style="font-size:17px;font-weight:700;margin-bottom:16px;color:var(--navy)">Leave Management</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="la-card">
+      <h3>Apply for Leave</h3><p class="sub">Submit a new leave request.</p>
+      <div class="fg"><label>Leave Type</label>
+        <select id="lt"><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Emergency Leave</option></select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+        <div class="fg"><label>From Date</label><input type="date" id="lfrom"></div>
+        <div class="fg"><label>To Date</label><input type="date" id="lto"></div>
+      </div>
+      <div class="fg"><label>Reason</label><textarea id="lreason" placeholder="Enter reason for leave..."></textarea></div>
+      <button class="bp" onclick="applyLeave()">Apply Leave</button>
+    </div>
+    <div class="leave-card">
+      <h3>Leave Balance</h3>
+      <div class="leave-bal">
+        <div class="lbal"><div class="lbal-type">Casual</div><div class="lbal-val">8 / 12</div><div class="lbal-sub">Used / Total</div></div>
+        <div class="lbal" style="border-left-color:var(--ok)"><div class="lbal-type">Sick Leave</div><div class="lbal-val">2 / 6</div><div class="lbal-sub">Used / Total</div></div>
+        <div class="lbal" style="border-left-color:var(--warn)"><div class="lbal-type">Earned</div><div class="lbal-val">5 / 8</div><div class="lbal-sub">Used / Total</div></div>
+        <div class="lbal" style="border-left-color:var(--danger)"><div class="lbal-type">Emergency</div><div class="lbal-val">1 / 2</div><div class="lbal-sub">Used / Total</div></div>
+      </div>
+      <div class="lhist">
+        <div style="font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:8px">Recent History</div>
+        <div class="lhist-row"><span>Sick Leave – 3 days</span><span class="ls-approved">Approved</span></div>
+        <div class="lhist-row"><span>Casual Leave – 1 day</span><span class="ls-pending">Pending</span></div>
+        <div class="lhist-row"><span>Emergency – 1 day</span><span class="ls-approved">Approved</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- LOGOUT -->
+<div class="loov" id="loov">
+  <div class="lobox">
+    <div class="loico">🚪</div>
+    <h3>Logging Out?</h3>
+    <p>Are you sure you want to logout?</p>
+    <div class="loacts">
+      <button class="bstay" onclick="hideLo()">Cancel</button>
+      <button class="bdolo" onclick="doLo()">Yes, Logout</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="tico">✅</span><span id="tmsg"></span></div>
+<div class="footer">© 2025 Sankar Finance Consultancy – All rights reserved</div>
+
+<script src="js/main.js"></script>
+<script>
+HRMS.requireAuth("employee");
+
+// LOGOUT
+function showLo(){document.getElementById('loov').classList.add('open');}
+function hideLo(){document.getElementById('loov').classList.remove('open');}
+function doLo(){hideLo();HRMS.logout();}
+document.getElementById('loov').addEventListener('click',e=>{if(e.target===document.getElementById('loov'))hideLo();});
+
+// VIEWS
+function showV(n){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.nlink').forEach(l=>l.classList.remove('on'));
+  document.getElementById('view-'+n).classList.add('on');
+  const m={dash:0,kyc:1,payslips:2};
+  if(m[n]!==undefined)document.querySelectorAll('.nlink')[m[n]].classList.add('on');
+}
+
+// CALENDAR
+function buildCal(){
+  const today=new Date();
+  const month=today.getMonth();
+  const year=today.getFullYear();
+  const first=new Date(year,month,1).getDay();
+  const days=new Date(year,month+1,0).getDate();
+  const absent=[8,15,23];
+  const holidays=[1,26];
+  let html='';let d=1;
+  for(let r=0;r<5;r++){
+    html+='<tr>';
+    for(let c=0;c<7;c++){
+      if((r===0&&c<first)||d>days){html+='<td></td>';}
+      else{
+        let cls='';
+        if(d===today.getDate())cls='today';
+        else if(absent.includes(d))cls='absent';
+        else if(holidays.includes(d))cls='holiday';
+        html+=`<td class="${cls}">${d}</td>`;d++;
+      }
+    }
+    html+='</tr>';
+    if(d>days)break;
+  }
+  document.getElementById('cal-body').innerHTML=html;
+}
+
+// LEAVE APPLY
+function applyLeave(){
+  const lt=document.getElementById('lt').value;
+  const lf=document.getElementById('lfrom').value;
+  const lo=document.getElementById('lto').value;
+  if(!lf||!lo){toast('Select leave dates','⚠️');return;}
+  toast(`Leave request submitted for ${lt}!`,'✅');
+  document.getElementById('lfrom').value='';
+  document.getElementById('lto').value='';
+  document.getElementById('lreason').value='';
+}
+
+// TOAST
+function toast(msg,ico='✅'){const t=document.getElementById('toast');document.getElementById('tmsg').textContent=msg;document.getElementById('tico').textContent=ico;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+buildCal();
+</script>
+</body>
+</html>

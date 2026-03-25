@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sankar Finance Consultancy – HRMS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1e3c; --navy2: #162747; --blue: #1a3a6e;
+    --accent: #2563eb; --accent2: #3b82f6; --gold: #f0a500;
+    --bg: #f0f4fb; --card: #ffffff; --text: #1e293b; --muted: #64748b;
+    --danger: #ef4444; --success: #22c55e; --warn: #f59e0b;
+    --border: #e2e8f0; --radius: 14px; --shadow: 0 4px 24px rgba(15,30,60,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  nav { background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 100%); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 36px; height: 64px; box-shadow: 0 2px 16px rgba(15,30,60,0.18); position: sticky; top: 0; z-index: 100; }
+  .nav-brand { display: flex; align-items: center; gap: 12px; }
+  .nav-logo { width: 38px; height: 38px; background: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 20px; color: var(--navy); font-weight: 700; }
+  .nav-title { font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
+  .nav-links { display: flex; gap: 6px; }
+  .nav-link { color: rgba(255,255,255,0.75); padding: 6px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all .2s; border: none; background: none; }
+  .nav-link:hover, .nav-link.active { color: #fff; background: rgba(255,255,255,0.12); }
+  .logout-btn { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 7px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all .2s; }
+  .logout-btn:hover { background: rgba(239,68,68,0.35); border-color: rgba(239,68,68,0.5); }
+  main { max-width: 1200px; margin: 0 auto; padding: 36px 24px; }
+  .view { display: none; animation: fadeIn .25s ease; }
+  .view.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 16px; margin-bottom: 28px; align-items: center; }
+  .stat-card { background: var(--card); border-radius: var(--radius); padding: 22px 26px; box-shadow: var(--shadow); border-left: 4px solid var(--accent); }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
+  .stat-value { font-size: 36px; font-weight: 700; color: var(--navy); line-height: 1; }
+  .add-emp-btn { background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%); color: #fff; border: none; padding: 14px 26px; border-radius: var(--radius); cursor: pointer; font-size: 15px; font-weight: 600; box-shadow: 0 4px 14px rgba(37,99,235,0.35); transition: all .2s; white-space: nowrap; }
+  .add-emp-btn:hover { transform: translateY(-2px); }
+  .dashboard-grid { display: grid; grid-template-columns: 1fr 260px; gap: 20px; }
+  .table-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .table-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); }
+  .table-header h2 { font-size: 17px; font-weight: 700; color: var(--navy); }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #f8fafc; text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--border); }
+  td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid #f1f5f9; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge-success { background: #dcfce7; color: #15803d; }
+  .badge-warn { background: #fef9c3; color: #b45309; }
+  .view-btn { color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; background: none; border: none; text-decoration: underline; }
+  .quick-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
+  .quick-card h3 { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+  .quick-btn { width: 100%; display: block; margin-bottom: 10px; background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); color: #fff; border: none; padding: 12px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; text-align: center; transition: all .2s; }
+  .quick-btn:hover { transform: translateY(-1px); }
+  .quick-btn.secondary { background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%); }
+  .quick-btn.tertiary { background: linear-gradient(135deg, #065f46 0%, #059669 100%); }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,30,60,0.55); backdrop-filter: blur(4px); z-index: 999; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--card); border-radius: 18px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(15,30,60,0.28); animation: modalIn .25s ease; }
+  @keyframes modalIn { from { opacity:0; transform:scale(.95) translateY(16px); } to { opacity:1; transform:none; } }
+  .modal-header { background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 100%); color: #fff; padding: 22px 28px; border-radius: 18px 18px 0 0; display: flex; align-items: center; justify-content: space-between; }
+  .modal-header h2 { font-size: 18px; font-weight: 700; }
+  .modal-close { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
+  .modal-body { padding: 28px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit; color: var(--text); background: #f8fafc; outline: none; transition: border .15s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.10); }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .form-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--accent); margin: 20px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #dbeafe; }
+  .file-drop { border: 2px dashed var(--border); border-radius: 10px; padding: 28px; text-align: center; cursor: pointer; transition: all .2s; background: #f8fafc; }
+  .file-drop:hover { border-color: var(--accent); background: #eff6ff; }
+  .file-drop input[type=file] { display: none; }
+  .file-drop-icon { font-size: 32px; margin-bottom: 8px; }
+  .file-drop-label { font-size: 14px; font-weight: 600; color: var(--navy); }
+  .file-drop-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .file-preview { margin-top: 12px; display: none; }
+  .file-preview .file-item { display: flex; align-items: center; gap: 10px; background: #eff6ff; border-radius: 8px; padding: 8px 12px; margin-top: 8px; font-size: 13px; }
+  .submit-row { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%); color: #fff; border: none; padding: 12px 28px; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 600; transition: all .2s; }
+  .btn-cancel { background: #f1f5f9; color: var(--muted); border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 600; }
+  .btn-cancel:hover { background: #e2e8f0; }
+  .toast { position: fixed; bottom: 28px; right: 28px; background: var(--navy); color: #fff; padding: 14px 22px; border-radius: 12px; font-size: 14px; font-weight: 600; box-shadow: 0 8px 24px rgba(15,30,60,0.25); z-index: 9999; transform: translateY(80px); opacity: 0; transition: all .3s; display: flex; align-items: center; gap: 10px; }
+  .toast.show { transform: none; opacity: 1; }
+  .kyc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .kyc-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; border-top: 4px solid var(--warn); }
+  .kyc-card.complete { border-top-color: var(--success); }
+  .kyc-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .kyc-emp-name { font-weight: 700; font-size: 15px; }
+  .kyc-emp-id { font-size: 12px; color: var(--muted); }
+  .kyc-doc-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .kyc-doc-row:last-child { border-bottom: none; }
+  .kyc-upload-btn { background: var(--accent); color: #fff; border: none; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .payslip-upload-area { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; text-align: center; max-width: 600px; margin: 0 auto; }
+  .payslip-upload-area h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .payslip-upload-area p { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  .audit-list { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .audit-item { display: flex; gap: 16px; align-items: flex-start; padding: 14px 22px; border-bottom: 1px solid #f1f5f9; }
+  .audit-item:last-child { border-bottom: none; }
+  .audit-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); margin-top: 5px; flex-shrink: 0; }
+  .audit-action { font-size: 14px; font-weight: 600; }
+  .audit-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .emp-detail { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; max-width: 700px; margin: 0 auto; }
+  .emp-detail-header { display: flex; gap: 20px; align-items: center; margin-bottom: 24px; }
+  .emp-avatar { width: 64px; height: 64px; border-radius: 14px; background: linear-gradient(135deg, var(--accent), var(--navy)); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; font-weight: 700; }
+  .emp-detail-info h2 { font-size: 22px; font-weight: 700; }
+  .emp-detail-info p { color: var(--muted); font-size: 14px; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .detail-field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
+  .detail-field p { font-size: 14px; font-weight: 500; margin-top: 3px; }
+  .back-btn { background: none; border: none; color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-bottom: 20px; }
+  .logout-overlay { display: none; position: fixed; inset: 0; background: rgba(15,30,60,0.60); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; }
+  .logout-overlay.open { display: flex; }
+  .logout-confirm-box { background: #fff; border-radius: 18px; width: 100%; max-width: 360px; padding: 36px 40px; text-align: center; box-shadow: 0 24px 60px rgba(15,30,60,0.28); animation: modalIn .3s cubic-bezier(0.34,1.56,0.64,1); }
+  .logout-confirm-icon { font-size: 46px; margin-bottom: 14px; }
+  .logout-confirm-box h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--navy); margin-bottom: 8px; }
+  .logout-confirm-box p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .logout-confirm-actions { display: flex; gap: 12px; }
+  .btn-stay { flex: 1; padding: 12px; border: 2px solid var(--border); background: transparent; color: var(--navy); border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .btn-stay:hover { border-color: var(--navy); }
+  .btn-do-logout { flex: 1; padding: 12px; background: var(--danger); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .btn-do-logout:hover { background: #dc2626; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">S</div>
+    <div class="nav-title">Sankar Finance Consultancy</div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showView('dashboard')">Dashboard</button>
+    <button class="nav-link" onclick="showView('kyc')">KYC Docs</button>
+    <button class="nav-link" onclick="showView('payslips')">Payslips</button>
+    <button class="nav-link" onclick="showView('audit')">Audit Log</button>
+  </div>
+  <button class="logout-btn" onclick="showLogoutConfirm()">🚪 Logout</button>
+</nav>
+
+<main>
+  <div class="view active" id="view-dashboard">
+    <div class="stats">
+      <div class="stat-card"><div class="stat-label">Total Employees</div><div class="stat-value" id="stat-emp">3</div></div>
+      <div class="stat-card" style="border-left-color:var(--warn)"><div class="stat-label">KYC Pending</div><div class="stat-value" id="stat-kyc" style="color:var(--warn)">2</div></div>
+      <div class="stat-card" style="border-left-color:var(--success)"><div class="stat-label">Payslips (This Month)</div><div class="stat-value" id="stat-pay" style="color:var(--success)">8</div></div>
+      <button class="add-emp-btn" onclick="goToOnboarding()">+ Add Employee</button>
+    </div>
+    <div class="dashboard-grid">
+      <div class="table-card">
+        <div class="table-header"><h2>Employee Table</h2></div>
+        <table><thead><tr><th>Emp ID</th><th>Name</th><th>Designation</th><th>KYC Status</th><th>Actions</th></tr></thead>
+        <tbody id="emp-table-body"></tbody></table>
+      </div>
+      <div class="quick-card">
+        <h3>Quick Actions</h3>
+        <button class="quick-btn" onclick="showView('payslips')">📤 Upload Payslips (Bulk)</button>
+        <button class="quick-btn secondary" onclick="generateReport()">📊 Generate Report</button>
+        <button class="quick-btn tertiary" onclick="backupNow()">💾 Backup Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="view-kyc">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px;color:var(--navy)">KYC Documents</h2>
+    <div class="kyc-grid" id="kyc-grid"></div>
+  </div>
+
+  <div class="view" id="view-payslips">
+    <div class="payslip-upload-area">
+      <div style="font-size:48px;margin-bottom:12px">📂</div>
+      <h2>Upload Payslips (Bulk)</h2>
+      <p>Upload payslip PDFs for all employees. Files should be named by Employee ID.</p>
+      <div class="file-drop" onclick="document.getElementById('payslip-file').click()">
+        <input type="file" id="payslip-file" multiple accept=".pdf" onchange="handlePayslipUpload(this)">
+        <div class="file-drop-icon">📄</div>
+        <div class="file-drop-label">Click to select or drag & drop PDFs</div>
+        <div class="file-drop-sub">Supports multiple PDF files</div>
+      </div>
+      <div class="file-preview" id="payslip-preview"></div>
+      <div style="margin-top:20px"><button class="btn-primary" onclick="submitPayslips()">Upload Payslips</button></div>
+    </div>
+  </div>
+
+  <div class="view" id="view-audit">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px;color:var(--navy)">Audit Log</h2>
+    <div class="audit-list" id="audit-list"></div>
+  </div>
+
+  <div class="view" id="view-emp-detail">
+    <button class="back-btn" onclick="showView('dashboard')">← Back to Dashboard</button>
+    <div class="emp-detail" id="emp-detail-content"></div>
+  </div>
+</main>
+
+<!-- ADD EMPLOYEE MODAL -->
+<div class="modal-overlay" id="modal-add-employee">
+  <div class="modal">
+    <div class="modal-header"><h2>➕ Add New Employee</h2><button class="modal-close" onclick="closeModal('add-employee')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-section-title">Personal Information</div>
+      <div class="form-row">
+        <div class="form-group"><label>First Name *</label><input type="text" id="emp-fname" placeholder="e.g. Ravi"></div>
+        <div class="form-group"><label>Last Name *</label><input type="text" id="emp-lname" placeholder="e.g. Kumar"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date of Birth</label><input type="date" id="emp-dob"></div>
+        <div class="form-group"><label>Gender</label><select id="emp-gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+      </div>
+      <div class="form-group"><label>Email Address *</label><input type="email" id="emp-email" placeholder="employee@sankar.com"></div>
+      <div class="form-group"><label>Phone Number</label><input type="tel" id="emp-phone" placeholder="+91 9999999999"></div>
+      <div class="form-section-title">Job Details</div>
+      <div class="form-row">
+        <div class="form-group"><label>Employee ID *</label><input type="text" id="emp-id" placeholder="e.g. CSH003"></div>
+        <div class="form-group"><label>Designation *</label><select id="emp-designation"><option value="">Select Role</option><option>HR Manager</option><option>Consultant</option><option>Senior Consultant</option><option>Finance Analyst</option><option>Accountant</option><option>Admin</option><option>Director</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date of Joining</label><input type="date" id="emp-doj"></div>
+        <div class="form-group"><label>Salary (₹/month)</label><input type="number" id="emp-salary" placeholder="e.g. 50000"></div>
+      </div>
+      <div class="form-group"><label>Address</label><textarea id="emp-address" placeholder="Full address..."></textarea></div>
+      <div class="form-section-title">KYC Documents (Optional)</div>
+      <div class="file-drop" onclick="document.getElementById('emp-kyc-file').click()">
+        <input type="file" id="emp-kyc-file" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleKycPreview(this,'emp-kyc-preview')">
+        <div class="file-drop-icon">📎</div><div class="file-drop-label">Upload Aadhaar, PAN, or other KYC docs</div><div class="file-drop-sub">PDF, JPG, PNG accepted</div>
+      </div>
+      <div class="file-preview" id="emp-kyc-preview"></div>
+      <div class="submit-row"><button class="btn-cancel" onclick="closeModal('add-employee')">Cancel</button><button class="btn-primary" onclick="addEmployee()">Add Employee</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- KYC UPLOAD MODAL -->
+<div class="modal-overlay" id="modal-kyc-upload">
+  <div class="modal">
+    <div class="modal-header"><h2>📋 Upload KYC Documents</h2><button class="modal-close" onclick="closeModal('kyc-upload')">✕</button></div>
+    <div class="modal-body">
+      <div id="kyc-modal-emp-name" style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:18px;"></div>
+      <div class="form-section-title">Select Document Type</div>
+      <div class="form-group"><label>Document Type *</label><select id="kyc-doc-type"><option value="">Select</option><option>Aadhaar Card</option><option>PAN Card</option><option>Passport</option><option>Voter ID</option><option>Driving License</option><option>Bank Passbook</option><option>Educational Certificate</option></select></div>
+      <div class="form-group"><label>Document Number</label><input type="text" id="kyc-doc-number" placeholder="e.g. ABCDE1234F"></div>
+      <div class="form-group"><label>Expiry Date (if applicable)</label><input type="date" id="kyc-expiry"></div>
+      <div class="form-section-title">Upload File</div>
+      <div class="file-drop" onclick="document.getElementById('kyc-file-input').click()">
+        <input type="file" id="kyc-file-input" accept=".pdf,.jpg,.jpeg,.png" onchange="handleKycPreview(this,'kyc-file-preview')">
+        <div class="file-drop-icon">📄</div><div class="file-drop-label">Click to upload document</div><div class="file-drop-sub">PDF, JPG, or PNG (max 5MB)</div>
+      </div>
+      <div class="file-preview" id="kyc-file-preview"></div>
+      <div class="submit-row"><button class="btn-cancel" onclick="closeModal('kyc-upload')">Cancel</button><button class="btn-primary" onclick="submitKyc()">Submit KYC</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGOUT OVERLAY -->
+<div class="logout-overlay" id="logout-overlay">
+  <div class="logout-confirm-box">
+    <div class="logout-confirm-icon">🚪</div>
+    <h3>Logging Out?</h3>
+    <p>Are you sure you want to logout from your HRMS account?</p>
+    <div class="logout-confirm-actions">
+      <button class="btn-stay" onclick="hideLogoutConfirm()">Cancel</button>
+      <button class="btn-do-logout" onclick="doLogout()">Yes, Logout</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toast-icon">✅</span><span id="toast-msg"></span></div>
+
+<script src="js/main.js"></script>
+<script>
+// ✅ Auth guard - redirect to login if not admin
+HRMS.requireAuth("admin");
+
+let employees = [];
+let auditLog  = [];
+let currentKycEmpId = null;
+
+// ✅ Load real data from API
+async function initDashboard() {
+  try {
+    const data = await HRMS.getAllEmployees();
+    employees = data.map(e => ({
+      ...e,
+      id:    e.empId,
+      fname: e.name ? e.name.split(" ")[0] : "",
+      lname: e.name ? e.name.split(" ").slice(1).join(" ") : "",
+      kyc:   e.kycStatus || "Pending",
+      docs:  []
+    }));
+    const stats = await HRMS.getAdminStats();
+    document.getElementById("stat-emp").textContent = stats.totalEmployees || employees.length;
+    document.getElementById("stat-kyc").textContent = stats.kycPending || employees.filter(e=>e.kyc==="Pending").length;
+  } catch(err) {
+    console.warn("API load failed:", err.message);
+    showToast("API error: " + err.message, "❌");
+  }
+  renderTable(); updateStats();
+}
+
+// ✅ Add Employee - saves to DB
+async function addEmployee() {
+  const empId       = document.getElementById("emp-id").value.trim();
+  const fname       = document.getElementById("emp-fname").value.trim();
+  const lname       = document.getElementById("emp-lname").value.trim();
+  const designation = document.getElementById("emp-designation").value.trim();
+  const email       = document.getElementById("emp-email").value.trim();
+  if (!empId || !fname || !email) { showToast("Please fill required fields", "⚠️"); return; }
+  try {
+    const result = await HRMS.addEmployee({
+      empId,
+      name:        fname + " " + lname,
+      email,
+      designation,
+      phone:       document.getElementById("emp-phone").value,
+      department:  document.getElementById("emp-department").value,
+      joiningDate: document.getElementById("emp-doj").value,
+      salary:      document.getElementById("emp-salary").value || 0
+    });
+    const pwd = result.defaultPassword || (email.split("@")[0] + "@123");
+    showToast(`Employee added! Password: ${pwd}`, "✅");
+    auditLog.unshift({ action: `New employee added: ${fname} ${lname} (${empId})`, meta: `Admin • ${new Date().toLocaleString()}` });
+    closeModal("add-employee");
+    await initDashboard();
+  } catch(err) {
+    showToast(err.message, "❌");
+  }
+}
+
+// ─── disabled dummy block ───
+// ✅ LOGOUT → back to login.html
+function showLogoutConfirm() { document.getElementById('logout-overlay').classList.add('open'); }
+function hideLogoutConfirm() { document.getElementById('logout-overlay').classList.remove('open'); }
+function doLogout() {
+  document.getElementById('logout-overlay').classList.remove('open');
+  HRMS.logout();
+}
+document.getElementById('logout-overlay').addEventListener('click', function(e) { if(e.target===this) hideLogoutConfirm(); });
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  const map={dashboard:0,kyc:1,payslips:2,audit:3};
+  if(map[name]!==undefined) document.querySelectorAll('.nav-link')[map[name]].classList.add('active');
+  if(name==='dashboard') renderTable();
+  if(name==='kyc') renderKyc();
+  if(name==='audit') renderAudit();
+  updateStats();
+}
+function updateStats() {
+  document.getElementById('stat-emp').textContent=employees.length;
+  document.getElementById('stat-kyc').textContent=employees.filter(e=>e.kyc==='Pending').length;
+}
+function renderTable() {
+  document.getElementById('emp-table-body').innerHTML=employees.map(e=>`
+    <tr>
+      <td><strong>${e.id}</strong></td><td>${e.fname} ${e.lname}</td><td>${e.designation}</td>
+      <td><span class="badge ${e.kyc==='Complete'?'badge-success':'badge-warn'}">${e.kyc==='Complete'?'✔':'⚠'} ${e.kyc}</span></td>
+      <td>
+        <button class="view-btn" onclick="viewEmployee('${e.id}')">View</button>
+        ${e.kyc==='Pending'?`<button class="view-btn" style="margin-left:8px;color:var(--warn)" onclick="openKycModal('${e.id}')">KYC ↑</button>`:''}
+      </td>
+    </tr>`).join('');
+}
+function viewEmployee(id) {
+  const e=employees.find(x=>x.id===id); if(!e) return;
+  const initials=(e.fname[0]||'')+(e.lname[0]||'');
+  document.getElementById('emp-detail-content').innerHTML=`
+    <div class="emp-detail-header">
+      <div class="emp-avatar">${initials}</div>
+      <div class="emp-detail-info"><h2>${e.fname} ${e.lname}</h2><p>${e.designation} • ${e.id}</p></div>
+      <span class="badge ${e.kyc==='Complete'?'badge-success':'badge-warn'}" style="margin-left:auto">${e.kyc==='Complete'?'✔':'⚠'} KYC ${e.kyc}</span>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-field"><label>Email</label><p>${e.email}</p></div>
+      <div class="detail-field"><label>Phone</label><p>${e.phone}</p></div>
+      <div class="detail-field"><label>Date of Birth</label><p>${e.dob}</p></div>
+      <div class="detail-field"><label>Gender</label><p>${e.gender}</p></div>
+      <div class="detail-field"><label>Date of Joining</label><p>${e.doj}</p></div>
+      <div class="detail-field"><label>Salary</label><p>₹${Number(e.salary).toLocaleString('en-IN')}/mo</p></div>
+      <div class="detail-field" style="grid-column:1/-1"><label>Address</label><p>${e.address||'—'}</p></div>
+      <div class="detail-field" style="grid-column:1/-1"><label>KYC Documents</label><p>${e.docs.length?e.docs.join(', '):'None submitted'}</p></div>
+    </div>
+    ${e.kyc==='Pending'?`<div style="margin-top:20px"><button class="btn-primary" onclick="openKycModal('${e.id}')">Upload KYC Documents</button></div>`:''}`;
+  showView('emp-detail');
+}
+function renderKyc() {
+  document.getElementById('kyc-grid').innerHTML=employees.map(e=>`
+    <div class="kyc-card ${e.kyc==='Complete'?'complete':''}">
+      <div class="kyc-card-header">
+        <div><div class="kyc-emp-name">${e.fname} ${e.lname}</div><div class="kyc-emp-id">${e.id} • ${e.designation}</div></div>
+        <span class="badge ${e.kyc==='Complete'?'badge-success':'badge-warn'}">${e.kyc}</span>
+      </div>
+      <div class="kyc-docs">${['Aadhaar Card','PAN Card','Passport'].map(doc=>`
+        <div class="kyc-doc-row">
+          <span>${e.docs.includes(doc.split(' ')[0])?'✅':'⬜'} ${doc}</span>
+          ${!e.docs.includes(doc.split(' ')[0])?`<button class="kyc-upload-btn" onclick="openKycModal('${e.id}')">Upload</button>`:'<span style="color:var(--success);font-size:12px">Uploaded</span>'}
+        </div>`).join('')}</div>
+    </div>`).join('');
+}
+function openKycModal(empId) {
+  currentKycEmpId=empId;
+  const e=employees.find(x=>x.id===empId);
+  document.getElementById('kyc-modal-emp-name').textContent=`Employee: ${e.fname} ${e.lname} (${e.id})`;
+  ['kyc-doc-type','kyc-doc-number','kyc-expiry'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('kyc-file-input').value='';
+  document.getElementById('kyc-file-preview').style.display='none';
+  openModal('kyc-upload');
+}
+function submitKyc() {
+  const docType=document.getElementById('kyc-doc-type').value;
+  const file=document.getElementById('kyc-file-input').files[0];
+  if(!docType){showToast('Please select a document type','⚠️');return;}
+  if(!file){showToast('Please upload a document file','⚠️');return;}
+  const e=employees.find(x=>x.id===currentKycEmpId);
+  const shortDoc=docType.split(' ')[0];
+  if(!e.docs.includes(shortDoc)) e.docs.push(shortDoc);
+  if(e.docs.length>=2) e.kyc='Complete';
+  auditLog.unshift({action:`KYC uploaded for ${e.fname} ${e.lname} (${docType})`,meta:`Admin • ${new Date().toLocaleString()}`});
+  closeModal('kyc-upload'); updateStats(); showToast(`KYC uploaded for ${e.fname} ${e.lname}!`,'✅'); renderKyc(); renderTable();
+}
+function addEmployee() {
+  const fname=document.getElementById('emp-fname').value.trim();
+  const lname=document.getElementById('emp-lname').value.trim();
+  const email=document.getElementById('emp-email').value.trim();
+  const empId=document.getElementById('emp-id').value.trim();
+  const designation=document.getElementById('emp-designation').value;
+  if(!fname||!lname){showToast('Enter first and last name','⚠️');return;}
+  if(!email){showToast('Enter email address','⚠️');return;}
+  if(!empId){showToast('Enter Employee ID','⚠️');return;}
+  if(!designation){showToast('Select a designation','⚠️');return;}
+  if(employees.find(e=>e.id===empId)){showToast('Employee ID already exists!','❌');return;}
+  employees.push({id:empId,fname,lname,designation,email,phone:document.getElementById('emp-phone').value,dob:document.getElementById('emp-dob').value,doj:document.getElementById('emp-doj').value,salary:document.getElementById('emp-salary').value||0,address:document.getElementById('emp-address').value,gender:document.getElementById('emp-gender').value,kyc:'Pending',docs:[]});
+  auditLog.unshift({action:`New employee added: ${fname} ${lname} (${empId})`,meta:`Admin • ${new Date().toLocaleString()}`});
+  closeModal('add-employee'); renderTable(); updateStats(); showToast(`${fname} ${lname} added!`,'✅');
+  ['emp-fname','emp-lname','emp-email','emp-phone','emp-id','emp-salary','emp-address'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('emp-gender').value=''; document.getElementById('emp-designation').value='';
+}
+function handlePayslipUpload(input) {
+  const p=document.getElementById('payslip-preview'); p.style.display='block';
+  p.innerHTML=Array.from(input.files).map(f=>`<div class="file-item">📄 ${f.name}</div>`).join('');
+}
+function submitPayslips() {
+  const files=document.getElementById('payslip-file').files;
+  if(!files.length){showToast('Please select files','⚠️');return;}
+  document.getElementById('stat-pay').textContent=parseInt(document.getElementById('stat-pay').textContent)+files.length;
+  auditLog.unshift({action:`Payslips uploaded – ${files.length} file(s)`,meta:`Admin • ${new Date().toLocaleString()}`});
+  document.getElementById('payslip-file').value=''; document.getElementById('payslip-preview').style.display='none';
+  showToast(`${files.length} payslip(s) uploaded!`,'✅');
+}
+function renderAudit() {
+  document.getElementById('audit-list').innerHTML=auditLog.map(a=>`<div class="audit-item"><div class="audit-dot"></div><div><div class="audit-action">${a.action}</div><div class="audit-meta">${a.meta}</div></div></div>`).join('');
+}
+function generateReport(){auditLog.unshift({action:'Report generated',meta:`Admin • ${new Date().toLocaleString()}`});showToast('Report generated!','📊');}
+function backupNow(){auditLog.unshift({action:'Data backup completed',meta:`Admin • ${new Date().toLocaleString()}`});showToast('Backup completed!','💾');}
+function handleKycPreview(input,previewId){const p=document.getElementById(previewId);p.style.display='block';p.innerHTML=Array.from(input.files).map(f=>`<div class="file-item">📎 ${f.name}</div>`).join('');}
+function openModal(name){document.getElementById('modal-'+name).classList.add('open');}
+function closeModal(name){document.getElementById('modal-'+name).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+function showToast(msg, icon = '✅') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  document.getElementById('toast-icon').textContent = icon;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function goToOnboarding() {
+  window.location.href = 'employee-onboarding.html';
+}
+
+initDashboard();
+</script>
+</body>
+</html>

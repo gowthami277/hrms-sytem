@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sankar Finance Consultancy – HRMS Login</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#eaeff8;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.wrap{display:flex;flex-direction:column;align-items:center;width:100%;padding:24px;}
+.card{background:#fff;border-radius:14px;box-shadow:0 8px 36px rgba(15,30,60,0.13);width:100%;max-width:420px;}
+.card-top{background:linear-gradient(90deg,#0f1e3c 0%,#1a3a6e 100%);padding:18px 28px;border-radius:14px 14px 0 0;display:flex;align-items:center;gap:12px;}
+.logo{width:34px;height:34px;background:#f0a500;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#0f1e3c;font-family:'Playfair Display',serif;}
+.brand{color:#fff;font-size:15.5px;font-weight:700;}
+.card-body{padding:32px 28px 26px;}
+.card-body h2{font-family:'Playfair Display',serif;font-size:24px;color:#0f1e3c;text-align:center;margin-bottom:24px;}
+.field{position:relative;margin-bottom:14px;}
+.field input{width:100%;padding:11px 40px 11px 14px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:13.5px;font-family:'DM Sans',sans-serif;color:#1e293b;background:#f8fafc;outline:none;transition:all .2s;}
+.field input:focus{border-color:#1a3a6e;background:#fff;box-shadow:0 0 0 3px rgba(26,58,110,0.08);}
+.field input::placeholder{color:#94a3b8;}
+.ficon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:14px;}
+.btn-login{width:100%;padding:12px;background:linear-gradient(90deg,#0f1e3c,#1a3a6e);color:#fff;border:none;border-radius:9px;font-size:14.5px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:6px;transition:all .2s;}
+.btn-login:hover{opacity:.9;transform:translateY(-1px);}
+.forgot{text-align:center;margin-top:12px;font-size:13px;}
+.forgot a{color:#1a3a6e;text-decoration:none;font-weight:500;}
+.errmsg{display:none;background:#fff0f0;color:#ef4444;border:1px solid #fecaca;border-radius:8px;padding:9px 13px;font-size:13px;margin-top:10px;text-align:center;}
+.footer{margin-top:28px;font-size:12px;color:#94a3b8;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="card-top">
+      <div class="logo">S</div>
+      <div class="brand">Sankar Finance Consultancy</div>
+    </div>
+    <div class="card-body">
+      <h2>Welcome Back</h2>
+      <div class="field">
+        <input type="email" id="email" placeholder="Email ID" autocomplete="off"/>
+        <span class="ficon">🔒</span>
+      </div>
+      <div class="field">
+        <input type="password" id="password" placeholder="Password"/>
+        <span class="ficon">🔒</span>
+      </div>
+      <button class="btn-login" id="loginBtn" onclick="doLogin()">Login</button>
+      <div class="errmsg" id="errmsg">Invalid credentials. Please try again.</div>
+<p>
+  <a href="#" onclick="showResetForm()">Forgot Password?</a>
+</p>
+
+<div id="resetBox" style="display:none;">
+  <h3>Reset Password</h3>
+
+  <input type="email" id="resetEmail" placeholder="Enter Email"><br><br>
+  <input type="password" id="newPassword" placeholder="New Password"><br><br>
+  <input type="password" id="confirmPassword" placeholder="Confirm Password"><br><br>
+
+  <button onclick="resetPassword()">Submit</button>
+</div>   
+ </div>
+  </div>
+  <div class="footer">© 2025 Sankar Finance Consultancy – All your Reserved</div>
+</div>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+
+async function doLogin(){
+  const em  = document.getElementById('email').value.trim();
+  const pw  = document.getElementById('password').value.trim();
+  const err = document.getElementById('errmsg');
+  const btn = document.querySelector('button') || document.querySelector('.btn-login');
+  err.style.display = 'none';
+
+  if(!em || !pw){
+    err.textContent = 'Please enter email and password.';
+    err.style.display = 'block';
+    return;
+  }
+
+  if(btn) { btn.textContent = 'Logging in...'; btn.disabled = true; }
+
+  try {
+    const data = await HRMS.handleLogin(em, pw);
+    if(data.role === 'admin'){
+      window.location.href = 'admin-dashboard.html';
+    } else {
+      window.location.href = 'employee-dashboard.html';
+    }
+  } catch(e) {
+    err.textContent = e.message || 'Invalid credentials. Please try again.';
+    err.style.display = 'block';
+    if(btn) { btn.textContent = 'Login →'; btn.disabled = false; }
+  }
+}
+</script>
+</body>
+</html>

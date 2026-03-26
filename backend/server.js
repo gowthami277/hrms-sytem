@@ -52,9 +52,9 @@ async function seedDefaultAdmin() {
         empId: "ADMIN001", name: "Admin",
         email: adminEmail, password: hashed, role: "admin"
       });
-      console.log("✅ Default admin seeded");
+      console.log(" Default admin seeded");
     } else {
-      console.log("ℹ️  Admin already exists");
+      console.log(" Admin already exists");
     }
 
     // ── Demo Employee User ──

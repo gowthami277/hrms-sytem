@@ -117,6 +117,38 @@ tr:hover td{background:#f8fafc;}
 .toast.show{transform:none;opacity:1;}
 .footer{text-align:center;color:#94a3b8;font-size:12px;padding:18px;margin-top:10px;}
 .help{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px 18px;font-size:13px;color:var(--muted);margin-top:14px;}
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:0 10px;height:auto;flex-wrap:wrap;}
+  .nbrand{padding:10px 0;}
+  .ntitle{font-size:12px;}
+  .nlinks{width:100%;overflow-x:auto;padding:5px 0 8px;border-top:1px solid rgba(255,255,255,.1);gap:2px;}
+  .nlink{padding:4px 10px;font-size:12px;white-space:nowrap;}
+  .nbtn{padding:4px 10px;font-size:12px;margin:4px 0 8px auto;}
+  main{padding:14px 10px;}
+  .pcard{grid-template-columns:1fr;gap:10px;}
+  .pcard-left h2{font-size:17px;}
+  .pcard > div:last-child{flex-direction:row!important;align-items:center!important;justify-content:space-between;}
+  .bgrid{grid-template-columns:1fr;}
+  table{font-size:12px;}
+  th,td{padding:8px 7px;}
+  th:nth-child(3),td:nth-child(3){display:none;}
+  .leave-bal{grid-template-columns:1fr 1fr;}
+  .lobox{max-width:90vw;padding:22px 18px;}
+  .toast{bottom:12px;right:12px;left:12px;}
+  .view > div[style*="grid-template-columns:1fr 1fr"]{display:block!important;}
+  .view > div[style*="grid-template-columns:1fr 1fr"] > *{margin-bottom:14px;}
+  .la-card,.leave-card{max-width:100%;}
+  .kyc-emp{max-width:100%;}
+  .qbtns{gap:6px;}
+  .qbtn{padding:8px 13px;font-size:12.5px;}
+}
+@media(max-width:480px){
+  th:nth-child(2),td:nth-child(2){display:none;}
+  .pcard-left h2{font-size:15px;}
+  .leave-bal{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
@@ -302,7 +334,7 @@ HRMS.requireAuth("employee");
 // LOGOUT
 function showLo(){document.getElementById('loov').classList.add('open');}
 function hideLo(){document.getElementById('loov').classList.remove('open');}
-function doLo(){hideLo();HRMS.logout();}
+function doLo(){hideLo();window.location.href='login.html';}
 document.getElementById('loov').addEventListener('click',e=>{if(e.target===document.getElementById('loov'))hideLo();});
 
 // VIEWS

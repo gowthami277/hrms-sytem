@@ -80,21 +80,21 @@ async function seedDefaultAdmin() {
           email: empEmail, designation: "Software Engineer",
           department: "IT", joiningDate: new Date("2024-01-01"), salary: 50000
         });
-        console.log("✅ Demo employee record seeded");
+        console.log("Demo employee record seeded");
       } else {
-        console.log("ℹ️  Demo employee record already exists");
+        console.log(" Demo employee record already exists");
       }
     } catch (empErr) {
-      console.log("ℹ️  Employee record skipped:", empErr.message);
+      console.log(" Employee record skipped:", empErr.message);
     }
 
   } catch (err) {
-    console.error("❌ Seed error:", err.message);
+    console.error(" Seed error:", err.message);
   }
 }
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📂 Open: http://localhost:${PORT}/login.html`);
+  console.log(` Server running on http://localhost:${PORT}`);
+  console.log(` Open: http://localhost:${PORT}/login.html`);
 });

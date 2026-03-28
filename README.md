@@ -75,6 +75,6 @@ Open: **http://localhost:5000**
 ## 🔧 Configuration (.env)
 ```
 PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/hrms
+MONGO_URI=mongodb+srv://hrms:hrms123@cluster0.upir4ap.mongodb.net/hrms
 JWT_SECRET=sankar_finance_hrms_secret_2024
 ```

@@ -55,7 +55,8 @@
   .quick-btn.tertiary { background: linear-gradient(135deg, #065f46 0%, #059669 100%); }
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,30,60,0.55); backdrop-filter: blur(4px); z-index: 999; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--card); border-radius: 18px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(15,30,60,0.28); animation: modalIn .25s ease; }
+  .modal { background: var(--card); border-radius: 18px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(15,30,60,0.28); animation: modalIn .25s ease; -webkit-overflow-scrolling: touch; }
+  .submit-row { position: sticky; bottom: 0; background: var(--card); padding: 12px 0 4px; margin-top: 8px; z-index: 1; }
   @keyframes modalIn { from { opacity:0; transform:scale(.95) translateY(16px); } to { opacity:1; transform:none; } }
   .modal-header { background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 100%); color: #fff; padding: 22px 28px; border-radius: 18px 18px 0 0; display: flex; align-items: center; justify-content: space-between; }
   .modal-header h2 { font-size: 18px; font-weight: 700; }
@@ -120,6 +121,45 @@
   .btn-stay:hover { border-color: var(--navy); }
   .btn-do-logout { flex: 1; padding: 12px; background: var(--danger); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
   .btn-do-logout:hover { background: #dc2626; }
+
+  /* ── MOBILE RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 14px; height: auto; flex-wrap: wrap; gap: 0; }
+    .nav-brand { padding: 10px 0; }
+    .nav-title { font-size: 13px; }
+    .nav-links { width: 100%; overflow-x: auto; padding: 6px 0 8px; gap: 2px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .nav-link { padding: 5px 10px; font-size: 12px; white-space: nowrap; }
+    .logout-btn { padding: 5px 10px; font-size: 12px; margin: 4px 0 8px auto; }
+    main { padding: 16px 12px; }
+    .stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .add-emp-btn { grid-column: 1 / -1; width: 100%; }
+    .stat-card { padding: 14px 16px; }
+    .stat-value { font-size: 26px; }
+    .dashboard-grid { grid-template-columns: 1fr; gap: 14px; }
+    .quick-card { order: -1; }
+    .quick-btn { padding: 11px 14px; font-size: 13px; }
+    table { font-size: 12px; }
+    th, td { padding: 9px 8px; }
+    th:nth-child(3), td:nth-child(3) { display: none; }
+    .modal { max-width: 95vw; margin: 10px; max-height: 95vh; }
+    .modal-body { padding: 16px; }
+    .form-row { grid-template-columns: 1fr; }
+    .modal-header { padding: 16px 18px; }
+    .kyc-grid { grid-template-columns: 1fr; }
+    .emp-detail { padding: 18px 14px; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .emp-detail-header { flex-wrap: wrap; }
+    .payslip-upload-area { padding: 20px 14px; }
+    .toast { bottom: 14px; right: 14px; left: 14px; font-size: 13px; }
+    .logout-confirm-box { padding: 24px 20px; max-width: 90vw; }
+  }
+  @media (max-width: 480px) {
+    .stats { grid-template-columns: 1fr; }
+    .stat-card { padding: 12px 14px; }
+    nav { padding: 0 10px; }
+    .nav-title { font-size: 12px; }
+    th:nth-child(4), td:nth-child(4) { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -144,7 +184,7 @@
       <div class="stat-card"><div class="stat-label">Total Employees</div><div class="stat-value" id="stat-emp">3</div></div>
       <div class="stat-card" style="border-left-color:var(--warn)"><div class="stat-label">KYC Pending</div><div class="stat-value" id="stat-kyc" style="color:var(--warn)">2</div></div>
       <div class="stat-card" style="border-left-color:var(--success)"><div class="stat-label">Payslips (This Month)</div><div class="stat-value" id="stat-pay" style="color:var(--success)">8</div></div>
-      <button class="add-emp-btn" onclick="goToOnboarding()">+ Add Employee</button>
+      <button class="add-emp-btn" onclick="openModal('add-employee')">+ Add Employee</button>
     </div>
     <div class="dashboard-grid">
       <div class="table-card">
@@ -212,6 +252,8 @@
       <div class="form-section-title">Job Details</div>
       <div class="form-row">
         <div class="form-group"><label>Employee ID *</label><input type="text" id="emp-id" placeholder="e.g. CSH003"></div>
+                <div class="form-group"><label>Department *</label><select id="emp-department"><option value="">Select Department</option><option>HR</option><option>IT</option><option>Finance</option><option>Operations</option></select></div>
+
         <div class="form-group"><label>Designation *</label><select id="emp-designation"><option value="">Select Role</option><option>HR Manager</option><option>Consultant</option><option>Senior Consultant</option><option>Finance Analyst</option><option>Accountant</option><option>Admin</option><option>Director</option></select></div>
       </div>
       <div class="form-row">
@@ -238,7 +280,7 @@
       <div id="kyc-modal-emp-name" style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:18px;"></div>
       <div class="form-section-title">Select Document Type</div>
       <div class="form-group"><label>Document Type *</label><select id="kyc-doc-type"><option value="">Select</option><option>Aadhaar Card</option><option>PAN Card</option><option>Passport</option><option>Voter ID</option><option>Driving License</option><option>Bank Passbook</option><option>Educational Certificate</option></select></div>
-      <div class="form-group"><label>Document Number</label><input type="text" id="kyc-doc-number" placeholder="e.g. ABCDE1234F"></div>
+      <div class="form-group"><label>Document Number</label><input type="text" id="kyc-doc-number" placeholder="e.g. ABCDE1234F" oninput="validatePanField(this)"><div id="pan-error" style="color:#ef4444;font-size:12px;margin-top:4px;display:none">❌ Invalid PAN format. Use: ABCDE1234F</div></div>
       <div class="form-group"><label>Expiry Date (if applicable)</label><input type="date" id="kyc-expiry"></div>
       <div class="form-section-title">Upload File</div>
       <div class="file-drop" onclick="document.getElementById('kyc-file-input').click()">
@@ -268,74 +310,18 @@
 
 <script src="js/main.js"></script>
 <script>
-// ✅ Auth guard - redirect to login if not admin
-HRMS.requireAuth("admin");
-
+// HRMS.requireAuth("admin");
 let employees = [];
-let auditLog  = [];
+let auditLog = [];
 let currentKycEmpId = null;
 
-// ✅ Load real data from API
-async function initDashboard() {
-  try {
-    const data = await HRMS.getAllEmployees();
-    employees = data.map(e => ({
-      ...e,
-      id:    e.empId,
-      fname: e.name ? e.name.split(" ")[0] : "",
-      lname: e.name ? e.name.split(" ").slice(1).join(" ") : "",
-      kyc:   e.kycStatus || "Pending",
-      docs:  []
-    }));
-    const stats = await HRMS.getAdminStats();
-    document.getElementById("stat-emp").textContent = stats.totalEmployees || employees.length;
-    document.getElementById("stat-kyc").textContent = stats.kycPending || employees.filter(e=>e.kyc==="Pending").length;
-  } catch(err) {
-    console.warn("API load failed:", err.message);
-    showToast("API error: " + err.message, "❌");
-  }
-  renderTable(); updateStats();
-}
-
-// ✅ Add Employee - saves to DB
-async function addEmployee() {
-  const empId       = document.getElementById("emp-id").value.trim();
-  const fname       = document.getElementById("emp-fname").value.trim();
-  const lname       = document.getElementById("emp-lname").value.trim();
-  const designation = document.getElementById("emp-designation").value.trim();
-  const email       = document.getElementById("emp-email").value.trim();
-  if (!empId || !fname || !email) { showToast("Please fill required fields", "⚠️"); return; }
-  try {
-    const result = await HRMS.addEmployee({
-      empId,
-      name:        fname + " " + lname,
-      email,
-      designation,
-      phone:       document.getElementById("emp-phone").value,
-      department:  document.getElementById("emp-department").value,
-      joiningDate: document.getElementById("emp-doj").value,
-      salary:      document.getElementById("emp-salary").value || 0
-    });
-    const pwd = result.defaultPassword || (email.split("@")[0] + "@123");
-    showToast(`Employee added! Password: ${pwd}`, "✅");
-    auditLog.unshift({ action: `New employee added: ${fname} ${lname} (${empId})`, meta: `Admin • ${new Date().toLocaleString()}` });
-    closeModal("add-employee");
-    await initDashboard();
-  } catch(err) {
-    showToast(err.message, "❌");
-  }
-}
-
-// ─── disabled dummy block ───
-// ✅ LOGOUT → back to login.html
+// ── LOGOUT ──
 function showLogoutConfirm() { document.getElementById('logout-overlay').classList.add('open'); }
 function hideLogoutConfirm() { document.getElementById('logout-overlay').classList.remove('open'); }
-function doLogout() {
-  document.getElementById('logout-overlay').classList.remove('open');
-  HRMS.logout();
-}
+function doLogout() { hideLogoutConfirm(); HRMS.logout(); }
 document.getElementById('logout-overlay').addEventListener('click', function(e) { if(e.target===this) hideLogoutConfirm(); });
 
+// ── VIEWS ──
 function showView(name) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
@@ -347,128 +333,402 @@ function showView(name) {
   if(name==='audit') renderAudit();
   updateStats();
 }
+
+// ── STATS ──
 function updateStats() {
-  document.getElementById('stat-emp').textContent=employees.length;
-  document.getElementById('stat-kyc').textContent=employees.filter(e=>e.kyc==='Pending').length;
+  document.getElementById('stat-emp').textContent = employees.length;
+  document.getElementById('stat-kyc').textContent = employees.filter(e=>e.kyc==='Pending').length;
 }
+
+// ── TABLE ──
 function renderTable() {
-  document.getElementById('emp-table-body').innerHTML=employees.map(e=>`
+  document.getElementById('emp-table-body').innerHTML = employees.map(e=>`
     <tr>
-      <td><strong>${e.id}</strong></td><td>${e.fname} ${e.lname}</td><td>${e.designation}</td>
+      <td><strong>${e.id}</strong></td>
+      <td>${e.fname} ${e.lname}</td>
+      <td>${e.designation}</td>
       <td><span class="badge ${e.kyc==='Complete'?'badge-success':'badge-warn'}">${e.kyc==='Complete'?'✔':'⚠'} ${e.kyc}</span></td>
-      <td>
-        <button class="view-btn" onclick="viewEmployee('${e.id}')">View</button>
-        ${e.kyc==='Pending'?`<button class="view-btn" style="margin-left:8px;color:var(--warn)" onclick="openKycModal('${e.id}')">KYC ↑</button>`:''}
+      <td style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <button class="view-btn" onclick="viewEmployee('${e.id}')">👁 View</button>
+        ${e.kyc==='Pending'?`<button class="view-btn" style="color:var(--warn)" onclick="openKycModal('${e.id}')">KYC ↑</button>`:''}
+        <button class="view-btn" style="color:var(--danger)" onclick="deleteEmployee('${e.id}')">🗑 Delete</button>
       </td>
     </tr>`).join('');
 }
+
+// ── DELETE EMPLOYEE ──
+function deleteEmployee(id) {
+  const e = employees.find(x=>x.id===id); 
+  if(!e) return;
+
+  if(!confirm(`Are you sure you want to delete ${e.fname} ${e.lname}?`)) return;
+
+  employees = employees.filter(x=>x.id!==id);
+
+  saveToLocalStorage(); // 👈 ADD THIS LINE
+
+  renderTable(); 
+  updateStats();
+
+  showToast('Employee deleted','🗑');
+}
+
+// ── VIEW EMPLOYEE ──
 function viewEmployee(id) {
-  const e=employees.find(x=>x.id===id); if(!e) return;
-  const initials=(e.fname[0]||'')+(e.lname[0]||'');
-  document.getElementById('emp-detail-content').innerHTML=`
+  const e = employees.find(x=>x.id===id); if(!e) return;
+  const initials = (e.fname[0]||'')+(e.lname[0]||'');
+
+  // Build KYC docs section
+  const kycDocsHtml = e.kycDocuments && e.kycDocuments.length
+    ? e.kycDocuments.map(doc=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:13px;">
+          <div>
+            <span style="margin-right:8px">📄</span>
+            <strong>${doc.docType || doc.type || 'Document'}</strong>
+            ${doc.docNumber ? `<span style="color:var(--muted);margin-left:8px">— ${doc.docNumber}</span>` : ''}
+          </div>
+          <div style="display:flex;gap:8px;">
+            ${doc.fileUrl ? `<a href="${doc.fileUrl}" target="_blank" style="color:var(--accent);font-weight:600;font-size:12px;text-decoration:none">👁 View</a>` : ''}
+            ${doc.fileUrl ? `<a href="${doc.fileUrl}" download style="color:var(--success);font-weight:600;font-size:12px;text-decoration:none">⬇ Download</a>` : ''}
+          </div>
+        </div>`).join('')
+    : e.docs && e.docs.length
+      ? e.docs.map(d=>`
+          <div style="padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px;">
+            <span style="margin-right:8px">📄</span><strong>${d}</strong>
+            <span style="color:var(--muted);margin-left:8px;font-size:12px">Uploaded</span>
+          </div>`).join('')
+      : `<p style="color:var(--muted);font-size:13px;">No KYC documents submitted yet.</p>`;
+
+  document.getElementById('emp-detail-content').innerHTML = `
     <div class="emp-detail-header">
       <div class="emp-avatar">${initials}</div>
-      <div class="emp-detail-info"><h2>${e.fname} ${e.lname}</h2><p>${e.designation} • ${e.id}</p></div>
+      <div class="emp-detail-info">
+        <h2>${e.fname} ${e.lname}</h2>
+        <p>${e.designation} • ${e.id}</p>
+      </div>
       <span class="badge ${e.kyc==='Complete'?'badge-success':'badge-warn'}" style="margin-left:auto">${e.kyc==='Complete'?'✔':'⚠'} KYC ${e.kyc}</span>
     </div>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid #dbeafe;">Personal Information</div>
     <div class="detail-grid">
-      <div class="detail-field"><label>Email</label><p>${e.email}</p></div>
-      <div class="detail-field"><label>Phone</label><p>${e.phone}</p></div>
-      <div class="detail-field"><label>Date of Birth</label><p>${e.dob}</p></div>
-      <div class="detail-field"><label>Gender</label><p>${e.gender}</p></div>
-      <div class="detail-field"><label>Date of Joining</label><p>${e.doj}</p></div>
-      <div class="detail-field"><label>Salary</label><p>₹${Number(e.salary).toLocaleString('en-IN')}/mo</p></div>
+      <div class="detail-field"><label>Full Name</label><p>${e.fname} ${e.lname}</p></div>
+      <div class="detail-field"><label>Employee ID</label><p>${e.id}</p></div>
+      <div class="detail-field"><label>Email</label><p>${e.email||'—'}</p></div>
+      <div class="detail-field"><label>Phone</label><p>${e.phone||'—'}</p></div>
+      <div class="detail-field"><label>Date of Birth</label><p>${e.dob||'—'}</p></div>
+      <div class="detail-field"><label>Gender</label><p>${e.gender||'—'}</p></div>
       <div class="detail-field" style="grid-column:1/-1"><label>Address</label><p>${e.address||'—'}</p></div>
-      <div class="detail-field" style="grid-column:1/-1"><label>KYC Documents</label><p>${e.docs.length?e.docs.join(', '):'None submitted'}</p></div>
     </div>
-    ${e.kyc==='Pending'?`<div style="margin-top:20px"><button class="btn-primary" onclick="openKycModal('${e.id}')">Upload KYC Documents</button></div>`:''}`;
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid #dbeafe;">Job Details</div>
+    <div class="detail-grid">
+      <div class="detail-field"><label>Designation</label><p>${e.designation||'—'}</p></div>
+      <div class="detail-field"><label>Department</label><p>${e.department||'—'}</p></div>
+      <div class="detail-field"><label>Date of Joining</label><p>${e.doj||e.joiningDate||'—'}</p></div>
+      <div class="detail-field"><label>Basic</label><p>₹${e.basic}</p></div>
+<div class="detail-field"><label>HRA</label><p>₹${e.hra}</p></div>
+<div class="detail-field"><label>DA</label><p>₹${e.da}</p></div>
+<div class="detail-field"><label>TA</label><p>₹${e.ta}</p></div>
+<div class="detail-field"><label>Other Allowance</label><p>₹${e.otherAllowance}</p></div>
+<div class="detail-field"><label>Gross Salary</label><p>₹${e.gross}</p></div>
+<div class="detail-field"><label>Deductions</label><p>₹${e.deductions}</p></div>
+<div class="detail-field"><label>Net Salary</label><p><strong>₹${e.netSalary}</strong></p></div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid #dbeafe;">KYC Documents</div>
+    <div>${kycDocsHtml}</div>
+
+    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+      ${e.kyc==='Pending'?`<button class="btn-primary" onclick="openKycModal('${e.id}')">📋 Upload KYC Documents</button>`:''}
+      <button class="btn-cancel" style="color:var(--danger);border:1.5px solid var(--danger);background:transparent;" onclick="deleteEmployee('${e.id}');showView('dashboard')">🗑 Delete Employee</button>
+    </div>`;
   showView('emp-detail');
 }
+
 function renderKyc() {
-  document.getElementById('kyc-grid').innerHTML=employees.map(e=>`
+  document.getElementById('kyc-grid').innerHTML = employees.map(e=>`
     <div class="kyc-card ${e.kyc==='Complete'?'complete':''}">
       <div class="kyc-card-header">
-        <div><div class="kyc-emp-name">${e.fname} ${e.lname}</div><div class="kyc-emp-id">${e.id} • ${e.designation}</div></div>
+        <div>
+          <div class="kyc-emp-name">${e.fname} ${e.lname}</div>
+          <div class="kyc-emp-id">${e.id} • ${e.designation}</div>
+        </div>
         <span class="badge ${e.kyc==='Complete'?'badge-success':'badge-warn'}">${e.kyc}</span>
       </div>
-      <div class="kyc-docs">${['Aadhaar Card','PAN Card','Passport'].map(doc=>`
-        <div class="kyc-doc-row">
-          <span>${e.docs.includes(doc.split(' ')[0])?'✅':'⬜'} ${doc}</span>
-          ${!e.docs.includes(doc.split(' ')[0])?`<button class="kyc-upload-btn" onclick="openKycModal('${e.id}')">Upload</button>`:'<span style="color:var(--success);font-size:12px">Uploaded</span>'}
-        </div>`).join('')}</div>
-    </div>`).join('');
+
+      <div class="kyc-docs">
+        ${['Aadhaar Card','PAN Card','Passport'].map(doc=>{
+          
+          const uploadedDoc = e.kycDocuments?.find(d => d.docType === doc);
+
+          return `
+          <div class="kyc-doc-row">
+            <span>${uploadedDoc ? '✅' : '⬜'} ${doc}</span>
+
+            ${
+              uploadedDoc
+              ? `
+                <div style="display:flex;gap:8px;">
+                  <a href="${uploadedDoc.fileUrl}" target="_blank" style="color:blue;font-size:12px;">👁 View</a>
+                  <button onclick="deleteKyc('${e.id}','${doc}')" style="color:red;font-size:12px;border:none;background:none;cursor:pointer;">🗑 Delete</button>
+                </div>
+              `
+              : `<button class="kyc-upload-btn" onclick="openKycModal('${e.id}')">Upload</button>`
+            }
+
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
 }
 function openKycModal(empId) {
-  currentKycEmpId=empId;
-  const e=employees.find(x=>x.id===empId);
-  document.getElementById('kyc-modal-emp-name').textContent=`Employee: ${e.fname} ${e.lname} (${e.id})`;
+  currentKycEmpId = empId;
+  const e = employees.find(x=>x.id===empId);
+  document.getElementById('kyc-modal-emp-name').textContent = `Employee: ${e.fname} ${e.lname} (${e.id})`;
   ['kyc-doc-type','kyc-doc-number','kyc-expiry'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('kyc-file-input').value='';
-  document.getElementById('kyc-file-preview').style.display='none';
+  document.getElementById('kyc-file-input').value = '';
+  document.getElementById('kyc-file-preview').style.display = 'none';
   openModal('kyc-upload');
 }
+
 function submitKyc() {
-  const docType=document.getElementById('kyc-doc-type').value;
-  const file=document.getElementById('kyc-file-input').files[0];
-  if(!docType){showToast('Please select a document type','⚠️');return;}
-  if(!file){showToast('Please upload a document file','⚠️');return;}
-  const e=employees.find(x=>x.id===currentKycEmpId);
-  const shortDoc=docType.split(' ')[0];
-  if(!e.docs.includes(shortDoc)) e.docs.push(shortDoc);
-  if(e.docs.length>=2) e.kyc='Complete';
-  auditLog.unshift({action:`KYC uploaded for ${e.fname} ${e.lname} (${docType})`,meta:`Admin • ${new Date().toLocaleString()}`});
-  closeModal('kyc-upload'); updateStats(); showToast(`KYC uploaded for ${e.fname} ${e.lname}!`,'✅'); renderKyc(); renderTable();
+  const docType = document.getElementById('kyc-doc-type').value;
+  const file = document.getElementById('kyc-file-input').files[0];
+
+  if(!docType){ showToast('Select document type','⚠️'); return; }
+  if(!file){ showToast('Upload file','⚠️'); return; }
+
+  const e = employees.find(x=>x.id===currentKycEmpId);
+
+  // 👉 create file URL (temporary)
+  const fileUrl = URL.createObjectURL(file);
+
+  if(!e.kycDocuments) e.kycDocuments = [];
+
+  e.kycDocuments.push({
+    docType,
+    fileUrl
+  });
+
+  e.kyc = 'Complete';
+
+  saveToLocalStorage(); // 👈 IMPORTANT
+
+  closeModal('kyc-upload');
+  renderKyc();
+  renderTable();
+
+  showToast('KYC uploaded','✅');
+
 }
+
+
+function validatePanField(input) {
+  const value = input.value.toUpperCase();
+  const docType = document.getElementById('kyc-doc-type').value;
+
+  const error = document.getElementById('pan-error');
+
+  // PAN format
+  const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
+  // 👉 If NOT PAN → no validation
+  if (docType !== "PAN Card") {
+    error.style.display = "none";
+    return;
+  }
+
+  // 👉 If empty → no error
+  if (value === "") {
+    error.style.display = "none";
+    return;
+  }
+
+  // 👉 Validate only PAN
+  if (!panPattern.test(value)) {
+    error.style.display = "block";
+  } else {
+    error.style.display = "none";
+  }
+}
+function deleteKyc(empId, docType) {
+  const e = employees.find(x => x.id === empId);
+
+  e.kycDocuments = e.kycDocuments.filter(d => d.docType !== docType);
+
+  if(e.kycDocuments.length === 0){
+    e.kyc = 'Pending';
+  }
+
+  saveToLocalStorage();
+
+  renderKyc();
+  showToast('Document deleted','🗑');
+}
+
+
+
+// ── ADD EMPLOYEE ──
 function addEmployee() {
-  const fname=document.getElementById('emp-fname').value.trim();
-  const lname=document.getElementById('emp-lname').value.trim();
-  const email=document.getElementById('emp-email').value.trim();
-  const empId=document.getElementById('emp-id').value.trim();
-  const designation=document.getElementById('emp-designation').value;
+
+  const salary = Number(document.getElementById('emp-salary').value) || 0;
+const basic = salary * 0.40;      // 40% Basic
+const hra = salary * 0.20;        // 20% HRA
+const da = salary * 0.10;         // 10% DA
+const ta = salary * 0.05;         // 5% Travel
+const otherAllowance = salary * 0.05;
+
+const gross = basic + hra + da + ta + otherAllowance;
+
+// Deductions
+const pf = basic * 0.12;          // PF 12%
+const tax = salary * 0.05;        // Tax 5%
+
+const deductions = pf + tax;
+
+// Net Salary
+const netSalary = gross - deductions;
+
+  const fname = document.getElementById('emp-fname').value.trim();
+  const lname = document.getElementById('emp-lname').value.trim();
+  const email = document.getElementById('emp-email').value.trim();
+  const empId = document.getElementById('emp-id').value.trim();
+  const designation = document.getElementById('emp-designation').value;
+  const department = document.getElementById('emp-department').value;
   if(!fname||!lname){showToast('Enter first and last name','⚠️');return;}
   if(!email){showToast('Enter email address','⚠️');return;}
   if(!empId){showToast('Enter Employee ID','⚠️');return;}
   if(!designation){showToast('Select a designation','⚠️');return;}
+  if(!department){showToast('Select a department','⚠️');return;}
   if(employees.find(e=>e.id===empId)){showToast('Employee ID already exists!','❌');return;}
-  employees.push({id:empId,fname,lname,designation,email,phone:document.getElementById('emp-phone').value,dob:document.getElementById('emp-dob').value,doj:document.getElementById('emp-doj').value,salary:document.getElementById('emp-salary').value||0,address:document.getElementById('emp-address').value,gender:document.getElementById('emp-gender').value,kyc:'Pending',docs:[]});
+employees.push({
+  id: empId,
+  fname,
+  lname,
+  designation,
+  email,
+  department,
+
+  salary,
+  basic,
+  hra,
+  da,
+  ta,
+  otherAllowance,
+  gross,
+  pf,
+  tax,
+  deductions,
+  netSalary,
+
+  phone: document.getElementById('emp-phone').value,
+  dob: document.getElementById('emp-dob').value,
+  doj: document.getElementById('emp-doj').value,
+  address: document.getElementById('emp-address').value,
+  gender: document.getElementById('emp-gender').value,
+
+  kyc: 'Pending',
+  docs: []
+});
   auditLog.unshift({action:`New employee added: ${fname} ${lname} (${empId})`,meta:`Admin • ${new Date().toLocaleString()}`});
   closeModal('add-employee'); renderTable(); updateStats(); showToast(`${fname} ${lname} added!`,'✅');
   ['emp-fname','emp-lname','emp-email','emp-phone','emp-id','emp-salary','emp-address'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('emp-gender').value=''; document.getElementById('emp-designation').value='';
 }
+
+// ── PAYSLIPS ──
 function handlePayslipUpload(input) {
-  const p=document.getElementById('payslip-preview'); p.style.display='block';
-  p.innerHTML=Array.from(input.files).map(f=>`<div class="file-item">📄 ${f.name}</div>`).join('');
+  const p = document.getElementById('payslip-preview');
+  p.style.display = 'block';
+  p.innerHTML = Array.from(input.files).map(f=>`<div class="file-item">📄 ${f.name}</div>`).join('');
 }
+
 function submitPayslips() {
-  const files=document.getElementById('payslip-file').files;
+  const files = document.getElementById('payslip-file').files;
   if(!files.length){showToast('Please select files','⚠️');return;}
-  document.getElementById('stat-pay').textContent=parseInt(document.getElementById('stat-pay').textContent)+files.length;
+  document.getElementById('stat-pay').textContent = parseInt(document.getElementById('stat-pay').textContent)+files.length;
   auditLog.unshift({action:`Payslips uploaded – ${files.length} file(s)`,meta:`Admin • ${new Date().toLocaleString()}`});
-  document.getElementById('payslip-file').value=''; document.getElementById('payslip-preview').style.display='none';
+  document.getElementById('payslip-file').value='';
+  document.getElementById('payslip-preview').style.display='none';
   showToast(`${files.length} payslip(s) uploaded!`,'✅');
 }
+
+// ── AUDIT ──
 function renderAudit() {
-  document.getElementById('audit-list').innerHTML=auditLog.map(a=>`<div class="audit-item"><div class="audit-dot"></div><div><div class="audit-action">${a.action}</div><div class="audit-meta">${a.meta}</div></div></div>`).join('');
+  document.getElementById('audit-list').innerHTML = auditLog.map(a=>`
+    <div class="audit-item"><div class="audit-dot"></div>
+    <div><div class="audit-action">${a.action}</div><div class="audit-meta">${a.meta}</div></div></div>`).join('');
 }
-function generateReport(){auditLog.unshift({action:'Report generated',meta:`Admin • ${new Date().toLocaleString()}`});showToast('Report generated!','📊');}
-function backupNow(){auditLog.unshift({action:'Data backup completed',meta:`Admin • ${new Date().toLocaleString()}`});showToast('Backup completed!','💾');}
-function handleKycPreview(input,previewId){const p=document.getElementById(previewId);p.style.display='block';p.innerHTML=Array.from(input.files).map(f=>`<div class="file-item">📎 ${f.name}</div>`).join('');}
-function openModal(name){document.getElementById('modal-'+name).classList.add('open');}
-function closeModal(name){document.getElementById('modal-'+name).classList.remove('open');}
+
+// ── QUICK ACTIONS ──
+function generateReport() {
+  auditLog.unshift({action:'Report generated',meta:`Admin • ${new Date().toLocaleString()}`});
+  showToast('Report generated!','📊');
+}
+function backupNow() {
+  auditLog.unshift({action:'Data backup completed',meta:`Admin • ${new Date().toLocaleString()}`});
+  showToast('Backup completed!','💾');
+}
+
+// ── HELPERS ──
+function handleKycPreview(input,previewId) {
+  const p = document.getElementById(previewId);
+  p.style.display='block';
+  p.innerHTML = Array.from(input.files).map(f=>`<div class="file-item">📎 ${f.name}</div>`).join('');
+}
+function openModal(name) { document.getElementById('modal-'+name).classList.add('open'); }
+function closeModal(name) { document.getElementById('modal-'+name).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
-function showToast(msg, icon = '✅') {
+
+function showToast(msg, icon='✅') {
   const t = document.getElementById('toast');
   document.getElementById('toast-msg').textContent = msg;
   document.getElementById('toast-icon').textContent = icon;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3200);
+  setTimeout(()=>t.classList.remove('show'), 3200);
 }
 
-function goToOnboarding() {
-  window.location.href = 'employee-onboarding.html';
+// ── INIT ──
+async function initDashboard() {
+  try {
+    const data = await HRMS.getAllEmployees();
+    employees = data.map(e => ({
+      ...e,
+      id: e.empId,
+      fname: e.name.split(' ')[0],
+      lname: e.name.split(' ').slice(1).join(' '),
+      kyc: e.kycStatus || 'Pending',
+      docs: (e.kycDocuments||[]).map(d => d.docType || d.type || 'Document'),
+      kycDocuments: e.kycDocuments || [],
+      dob: e.dateOfBirth || e.dob || '—',
+      doj: e.joiningDate || e.doj || '—',
+      phone: e.phone || e.phoneNumber || '—',
+      address: e.address || '—',
+      gender: e.gender || '—',
+    }));
+    const stats = await HRMS.getAdminStats();
+    document.getElementById('stat-emp').textContent = stats.totalEmployees;
+    document.getElementById('stat-kyc').textContent = stats.kycPending;
+    document.getElementById('stat-pay').textContent = stats.payslipsThisMonth || 0;
+  } catch(err) {
+    console.warn('API load failed, using local data:', err.message);
+  }
+  renderTable(); updateStats();
 }
 
+function saveToLocalStorage() {
+  localStorage.setItem('employees', JSON.stringify(employees));
+}
+
+function loadFromLocalStorage() {
+  const data = localStorage.getItem('employees');
+  if(data){
+    employees = JSON.parse(data);
+  }
+}
+loadFromLocalStorage();
 initDashboard();
 </script>
 </body>

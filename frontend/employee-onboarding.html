@@ -134,6 +134,31 @@ input:checked+.tsl:before{transform:translateX(18px);}
 .toast{position:fixed;bottom:22px;right:22px;background:var(--navy);color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;box-shadow:0 5px 18px rgba(15,30,60,.2);z-index:9999;transform:translateY(60px);opacity:0;transition:all .26s;display:flex;align-items:center;gap:8px;}
 .toast.show{transform:none;opacity:1;}
 .footer{text-align:center;color:#94a3b8;font-size:12px;padding:18px;margin-top:10px;}
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:0 10px;height:auto;flex-wrap:wrap;}
+  .nbrand{padding:10px 0;}
+  .ntitle{font-size:12px;}
+  .nbtn{padding:4px 12px;font-size:12px;margin:4px 0 8px auto;}
+  main{padding:14px 10px;}
+  .form-card{padding:18px 14px;}
+  .form-row{grid-template-columns:1fr!important;}
+  .step-bar{gap:4px;overflow-x:auto;padding-bottom:4px;}
+  .step{min-width:60px;font-size:11px;padding:6px 8px;}
+  .step-num{width:22px;height:22px;font-size:11px;}
+  .section-title{font-size:13px;}
+  .file-drop{padding:18px;}
+  .btn-row{flex-direction:column;gap:8px;}
+  .btn-row button{width:100%;}
+  .toast{bottom:12px;right:12px;left:12px;}
+  .lobox{max-width:90vw;padding:22px 18px;}
+}
+@media(max-width:480px){
+  .form-card h2{font-size:16px;}
+  .step-bar{flex-wrap:nowrap;}
+}
+
 </style>
 </head>
 <body>
@@ -483,7 +508,7 @@ HRMS.requireAuth("admin");
 // LOGOUT
 function showLo(){document.getElementById('loov').classList.add('open');}
 function hideLo(){document.getElementById('loov').classList.remove('open');}
-function doLo(){hideLo();HRMS.logout();}
+function doLo(){hideLo();window.location.href='login.html';}
 document.getElementById('loov').addEventListener('click',e=>{if(e.target===document.getElementById('loov'))hideLo();});
 
 // STEP NAVIGATION
@@ -560,40 +585,19 @@ function markDoc(id){
 }
 
 // SUBMIT
-async // SUBMIT — saves to DB and redirects to dashboard
-async function submitOB(){
-  const nm   = document.getElementById('fn').value.trim();
-  const em   = document.getElementById('pem').value.trim();
-  const des  = document.getElementById('des').value || 'Consultant';
-  const dept = document.getElementById('dept').value || 'General';
-  const doj  = document.getElementById('doj').value || '';
-  const bsal = document.getElementById('bsal').value || 0;
-
-  if(!nm) { showToast('Full Name required','⚠️'); return; }
-  if(!em) { showToast('Email required','⚠️'); return; }
-
-  const empId = em.split('@')[0].toUpperCase().replace(/[^A-Z0-9]/g,'') + Date.now().toString().slice(-4);
-
-  try {
-    const result = await HRMS.addEmployee({
-      empId, name: nm, email: em,
-      designation: des, department: dept,
-      joiningDate: doj, salary: bsal
-    });
-    const pwd = result.defaultPassword || (em.split('@')[0] + '@123');
-    document.getElementById('ok-msg').textContent =
-      nm + ' has been successfully onboarded as ' + des +
-      (dept ? ' in the ' + dept + ' department.' : '.') +
-      ' | Employee ID: ' + empId + ' | Password: ' + pwd;
-    document.querySelectorAll('.spanel').forEach(p => p.classList.remove('on'));
-    document.getElementById('sp-ok').classList.add('on');
-    document.querySelector('.stepper').style.display = 'none';
-    document.querySelector('.progress-wrap').style.display = 'none';
-    showToast(nm + ' onboarded successfully!', '✅');
-    setTimeout(() => { window.location.href = 'admin-dashboard.html'; }, 3000);
-  } catch(err) {
-    showToast('Error: ' + err.message, '❌');
-  }
+function submitOB(){
+  const nm=document.getElementById('fn').value.trim();
+  const em=document.getElementById('pem').value.trim();
+  const des=document.getElementById('des').value||'Consultant';
+  const dept=document.getElementById('dept').value||'General';
+  if(!nm){showToast('Full Name required','⚠️');return;}
+  document.getElementById('ok-msg').textContent=
+    nm+' has been successfully onboarded as '+des+(dept?' in the '+dept+' department.':'.');
+  document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('sp-ok').classList.add('on');
+  // Hide stepper on success
+  document.querySelector('.stepper').style.display='none';
+  document.querySelector('.progress-wrap').style.display='none';
 }
 
 // RESET

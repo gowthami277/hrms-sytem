@@ -11,7 +11,7 @@ hrms-system/
 │   │   ├── User.js
 │   │   ├── Employee.js
 │   │   ├── Attendance.js
-│   │   └── Payslip.js
+│   │   └── Payslip.js  
 │   └── routes/
 │       ├── auth.js            ← /api/auth/login, /api/auth/register
 │       ├── admin.js           ← /api/admin/employees, payslips, attendance
